@@ -1,0 +1,84 @@
+snake_case_name,friendly_label,field_type,notes
+sample_id,Sample ID,text,Unique sample identifier.
+subject_id,Subject ID,text,Unique subject identifier.
+cup_weight_g,Cup Weight (g),number,Weight of the sample cup in grams.
+patient_status,Patient Status,dropdown,"Clinical status at sample collection (A: Untreated, B: On-treatment, C: End of Treatment, D: Stable)."
+collection_method,Collection Method,text,"Collection method for sputum sample (1: Spontaneous, 2: Hypertonic Saline, 3: Bicarbonate)."
+sputum_collection_date,Sputum Collection Date- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+day_of_sputm,Day of sputm collection (Date of first sample is D0),number,Days since first sample collection (D0).
+fzfshfz_frozenfresh_frozenhome,Fz/Fs/HFz (Frozen/Fresh/ Frozen@Home),text,"Sample condition: Fs=Fresh, Fz=Frozen, HFz=Frozen at Home."
+diagnosis,Diagnosis,dropdown,"Clinical diagnosis (e.g., CF, NCFB)."
+date_of_gram_stain_culture,Date of Aerobic respiratory culture- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+day_of_gram_stain_culture,Day of Aerobic respiratory culture (Date of first sample is D0),number,Days since first sample collection (D0).
+type_of_specimen,Type of specimen (for aerobic respiratory culture),dropdown,"Type of specimen collected (e.g., Expectorated, Throat Swab)."
+staphylococcus_aureus,Staphylococcus aureus,text,
+type_of_staphylococcus,Type of Staphylococcus,dropdown,
+pseudomonas_aeruginosa,Pseudomonas aeruginosa,text,
+pseudomonas_aeruginosa_mucoid,"Pseudomonas aeruginosa, mucoid status",text,
+burkholderia_species,Burkholderia species,dropdown,Presence of the indicated microorganism. (Yes/No).
+alcaligenes_achromobacter_xylosoxidans,Alcaligenes (Achromobacter) xylosoxidans,text,
+stenotrophomonas_xanthomonasmaltophilia,Stenotrophomonas (Xanthomonas)/Maltophilia,text,
+escherichia_coli,Escherichia Coli,text,
+streptococcus_pneumoniae,Streptococcus pneumoniae,text,
+streptococcus_agalactiae,Streptococcus agalactiae,text,
+other_microorganisms,Other Microorganisms:,notes,Presence of the indicated microorganism. (Yes/No).
+aspergillus_any_species,Aspergillus (any species),dropdown,Presence of the indicated microorganism. (Yes/No).
+candida_any_species,Candida (any species),dropdown,Presence of the indicated microorganism. (Yes/No).
+yeast_not_cryptococcus_species,"Yeast, not cryptococcus species",dropdown,Presence of the indicated microorganism. (Yes/No).
+other_bacterial_or,Other bacterial or fungal species,notes,
+date_of_AFB_culture,Date of anaerobic culture- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+day_of_AFB_culture,Day of Anaerobic respiratory culture (Date of first sample is D0),number,Days since first sample collection (D0).
+type_of_specimen_2,Type of specimen (for anaerobic culture),dropdown,"Type of specimen collected (e.g., Expectorated, Throat Swab)."
+myco_abscessus,Mycobacterium abscessus,text,
+myco_aviumintracellulare,Mycobacterium avium-intracellulare,dropdown,Race as reported.
+other_mycobacteria_species,Other anaerobic species,dropdown,Presence of the indicated microorganism. (Yes/No).
+date_of_pex,Date of PEx Assessment- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+day_of_pex_assessment,Day of PEx Assessment,number,Days since first sample collection (D0).
+assessment_of_pulmonary,Assessment of Pulmonary Exacerbation (Pex),dropdown,Clinical assessment result. (Yes/No/TBD).
+date_of_medication,Date of Medication Review- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+day_of_medication_review,Day of Medication Review,number,Days since first sample collection (D0).
+antibiotic_status,Antibiotic status,dropdown,Overall status for the subject or sample.
+inhaled_tobramycin_tobi,Inhaled Tobramycin (TOBI),text,
+inhaled_aztreonam_cayston,Inhaled Aztreonam (Cayston),text,
+inhaled_amikacin_arikayce,Inhaled Amikacin (Arikayce),text,
+azithromycin_oral,Azithromycin- oral,text,Antibiotic exposure. (Yes/No).
+sulfamethoxazoletrimethoprim_oral_bactrim,Sulfamethoxazole/Trimethoprim- oral (Bactrim®),text,Antibiotic exposure. (Yes/No).
+ciprooral,Cipro-oral,text,
+levaquinoral,Levaquin-oral,text,
+augmentinoral,Augmentin-oral,text,
+ethambutoloral,Ethambutol-oral,text,
+rifabutinoral,Rifabutin-oral,text,
+clofazimine_oral,Clofazimine- oral,text,Antibiotic exposure. (Yes/No).
+other_abxoral,Other Abx-Oral,notes,Antibiotic exposure. (Yes/No).
+amikaciniv,Amikacin-IV,text,
+azithromycin_iv,Azithromycin- IV,text,Antibiotic exposure. (Yes/No).
+ceftazidimeiv,Ceftazidime-IV,text,
+clindamyciniv,Clindamycin-IV,text,
+colistiniv,Colistin-IV,text,
+doxycycline_iv,Doxycycline- IV,text,Antibiotic exposure. (Yes/No).
+levofloxacin_iv,Levofloxacin- IV,text,Antibiotic exposure. (Yes/No).
+linezolidiv,Linezolid-IV,text,
+meropenem_iv,Meropenem- IV,text,Antibiotic exposure. (Yes/No).
+piperacillintazobactam__iv,Piperacillin/tazobactam - IV,text,Antibiotic exposure. (Yes/No).
+sulfamethoxazole_and_trimethoprim,Sulfamethoxazole and trimethoprim- IV,text,
+tigecyclineiv,Tigecycline-IV,text,
+tobramyciniv,Tobramycin-IV,text,
+vancomyciniv,Vancomycin-IV,text,
+zosyniv,Zosyn-IV,text,
+other_abxiv,Other Abx-IV,notes,Antibiotic exposure. (Yes/No).
+cftr_modulator_status,CFTR modulator status,dropdown,Overall status for the subject or sample.
+rhdnase_pulmozyme_dornase,"rhDNAse (Pulmozyme, dornase alpha)",text,Use of rhDNase therapy. (Yes/No).
+inhhs_hypertonic_saline,"inhHS  (hypertonic saline,  inh sodium chloride 3%, or 7%, pulmosal)",text,Use of inhaled hypertonic saline. (Yes/No).
+airway_clearance,Airway Clearance,text,Use of airway clearance techniques. (Yes/No).
+lung_function_date_ucsd_only,Lung Function Date- UCSD only,date_ymd,Date in format YYYY-MM-DD.
+lung_function_day,Lung Function Day,number,Days since first sample collection (D0).
+lung_function_age_years,Lung Function Age (years),number,Age at time of measurement (years).
+ht_cm,Ht (cm),number,Height in centimeters.
+weight_kg,Weight (kg),number,Height in centimeters.
+sex_at_birth,Sex at birth,dropdown,Sex assigned at birth. (Male/Female).
+race,Race,dropdown,Race as reported.
+ethnicity,Ethnicity,dropdown,Ethnicity as reported.
+fev1_l,FEV1 (L),number,Forced expiratory volume in 1 second.
+fev1_pp,FEV1 (PP),number,Forced expiratory volume in 1 second.
+fvc_l,FVC (L),number,Forced vital capacity.
+fvc_pp,FVC (PP),number,Forced vital capacity.

@@ -1,0 +1,1 @@
+Sample ID  (M=Mouthrinse) (P=Peds),Subject ID,Cup Weight,"Patient Status/ Collection Method                                        A: Untreated acute exacerbation 
