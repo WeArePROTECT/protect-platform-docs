@@ -6,11 +6,11 @@ The PROTECT Taxonomy Treemap Viewer is an interactive treemap visualization tool
 
 ## What it shows (and does not show)
 
-- **Shows:** Hierarchical taxonomy distribution (Domain → Phylum → Class → Order → Family → Genus) with proportional area representation
+- **Shows:** Hierarchical taxonomy distribution (Domain → Phylum → Class → Order → Family → Genus → Species → Individual isolates) with proportional area representation and interactive drill-down/zoom behavior that allows exploration from high-level taxonomic groups down to individual isolate tiles
 - **Does NOT:**
   - Allow editing or modifications to the dataset
   - Expose raw file contents or clinical data
-  - Provide direct data downloads (data accessible via related TSV endpoint)
+  - Provide data downloads through the treemap interface (data is available separately via related TSV endpoints)
 
 ## Where to access it
 
@@ -32,7 +32,9 @@ The Taxonomy Treemap Viewer is linked from the ASMA Prototype "tools" menu, enab
 
 ## Example treemap snapshot
 
-A screenshot of the treemap visualization can be added to `images/` if needed for documentation purposes.
+Below is an example view of the Taxonomy Treemap Viewer interface. Each rectangle represents an individual isolate, and clicking tiles enables drill-down exploration across taxonomic levels from high-level groups down to individual isolates.
+
+![Taxonomy Treemap Viewer preview](images/tax_treemap_preview_image.png)
 
 ## Related documentation
 
