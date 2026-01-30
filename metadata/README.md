@@ -12,13 +12,13 @@ The current focus is **Conrad Lab metadata**, including:
 
 ## Current Structure
 
-'''metadata/
+metadata/
 ├── README.md
 └── conrad/
 ├── clinical_docs/
 ├── monthly_drops/
 ├── redcap/
-└── schema_snapshots/'''
+└── schema_snapshots/
 
 
 ---
