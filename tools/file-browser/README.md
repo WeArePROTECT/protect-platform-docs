@@ -1,0 +1,31 @@
+# PROTECT File Browser
+
+## What it is
+
+The PROTECT File Browser is a read-only web-based directory browser that provides visibility into the `/usr2/people/protect/` directory structure via a static HTML site. It enables audit transparency and helps team members locate data files without requiring direct server access.
+
+## What it shows (and does not show)
+
+- **Shows:** Folder structure and filenames within the allowed root directory (`/usr2/people/protect/`)
+- **Does NOT:**
+  - Expose file contents
+  - Provide file downloads
+  - Allow browsing outside the allowed root directory
+
+## Where to access it
+
+- **Viewer URL:** https://protect.qb3.berkeley.edu/protect/
+
+## How it works (high level)
+
+- Nightly `tree -J` snapshot generates JSON representation of the directory structure
+- Static HTML renders the JSON as a collapsible tree interface
+- Automated refresh cadence: once per 24 hours (daily cron job)
+
+## Source repository
+
+- **GitHub:** https://github.com/WeArePROTECT/protect-data-listing
+
+## Operations notes
+
+The tool runs as a scheduled job that generates a fresh directory snapshot daily. The snapshot JSON and generated HTML are served as static files. Health of the tool can be verified by checking the timestamp of the most recent snapshot in the generated output.
