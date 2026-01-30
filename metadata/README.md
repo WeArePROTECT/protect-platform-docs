@@ -1,16 +1,21 @@
 # Metadata
 
-This directory documents PROTECT metadata standards and lab-provided metadata packages used across PROTECT / ASMA platforms and tooling.
+This directory documents **metadata structure, standards, and governance**
+for data used across PROTECT / ASMA platforms and tooling.
 
-The current focus is **Conrad Lab metadata**, including:
-- recurring metadata drop conventions (structure + cadence)
-- REDCap design/specification documentation (future-facing; design artifacts)
-- clinical metadata handling documentation
-- non-sensitive schema snapshots (column headers only)
+It serves as a centralized index for:
+- lab-provided metadata packages
+- metadata delivery conventions (e.g., periodic drops, system-based exports)
+- metadata system design/specification documentation
+- non-sensitive schema documentation used to track structure over time
+
+This directory is intentionally **extensible**. As additional labs and data
+sources are onboarded, each will be documented in its own subdirectory using
+a consistent pattern.
 
 ---
 
-## Current Structure
+## Directory Structure
 
 metadata/
 ├── README.md
@@ -18,40 +23,57 @@ metadata/
 ├── clinical_docs/
 ├── monthly_drops/
 ├── redcap/
-└── schema_snapshots/
+├── schema_snapshots/
+└── README.md
 
 
 ---
 
-## Conrad Metadata
-### `conrad/clinical_docs/`
-Clinical metadata handling documentation provided by the Conrad team.  
-This folder captures the most recent guidance available and may include multiple versions of decision documents.
+## Current Metadata Sources
 
-### `conrad/monthly_drops/`
-Documentation describing how Conrad metadata is delivered over time (often event-driven, frequently monthly when new samples are added), and what constitutes the "current" export structure.
+### Conrad Lab
 
-### `conrad/redcap/`
-REDCap documentation for a **Conrad-owned REDCap system currently in construction**.  
-Files here are design/spec artifacts describing field structure and planned access patterns (not live exports).
+The only fully documented metadata source at present is the **Conrad Lab**.
+All Conrad-specific documentation is contained within:
 
-### `conrad/schema_snapshots/`
-Non-sensitive schema snapshots (column headers only) extracted from Conrad metadata exports to document structure evolution over time without storing sensitive content.
+metadata/conrad/
+
+
+See `metadata/conrad/README.md` for details on:
+- metadata delivery cadence
+- REDCap system design and specifications
+- clinical metadata handling documentation
+- schema snapshots documenting structure evolution
+
+Future metadata sources should be added as **peer directories** alongside
+`conrad/`.
 
 ---
 
 ## Sensitivity and Publishing Guidance
 
-This repository is intended to remain safe to share. As a rule:
-- Do **not** commit raw metadata exports containing sensitive content.
-- Prefer documenting structure via **schema snapshots** (column headers) and written READMEs.
-- If a file's sensitivity is unclear, treat it as sensitive by default and exclude it until reviewed.
+This repository is intended to remain safe to share.
+
+As a general rule:
+- Do **not** commit raw metadata exports containing sensitive content
+- Prefer documenting metadata via:
+  - READMEs
+  - design/specification documents
+  - non-sensitive schema snapshots (e.g., column headers only)
+- If sensitivity is unclear, treat the file as sensitive and exclude it
+  until reviewed
 
 ---
 
-## How to Add New Metadata Documentation
+## Adding New Metadata Sources
 
-1. Add new **REDCap design/spec** materials to `conrad/redcap/` and update `conrad/redcap/README.md`.
-2. When a new metadata drop arrives, update `conrad/monthly_drops/README.md` if cadence or structure changes.
-3. Add/refresh a new **schema snapshot** (column headers only) in `conrad/schema_snapshots/` for structure tracking.
-4. Keep documentation short, structured, and evergreen.
+When onboarding a new metadata source or lab:
+
+1. Create a new subdirectory under `metadata/` (e.g., `metadata/<lab_name>/`)
+2. Add a `README.md` describing:
+   - ownership
+   - delivery mechanism
+   - cadence
+   - sensitivity considerations
+3. Document structure using non-sensitive schema snapshots where applicable
+4. Keep documentation concise, structured, and link-first
