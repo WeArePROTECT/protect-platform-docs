@@ -16,7 +16,6 @@ The PROTECT Taxonomy Treemap Viewer is an interactive treemap visualization tool
 
 - **Treemap Viewer:** https://protect.qb3.berkeley.edu/asma/api/taxonomy/treemap
 - **Related Table Viewer:** https://protect.qb3.berkeley.edu/asma/api/taxonomy/table
-- **Related TSV endpoint:** https://protect.qb3.berkeley.edu/asma/api/taxonomy/tsv
 
 ## Data source and ownership
 
