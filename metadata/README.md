@@ -1,138 +1,58 @@
-# Metadata Standards
+# Metadata
 
-This directory contains documentation for standardized metadata schemas used across PROTECT, including current and prior versions, update cadence notes, and links to example files where appropriate.
+This directory documents PROTECT metadata standards and lab-provided metadata packages used across PROTECT / ASMA platforms and tooling.
 
----
-
-## Purpose of Metadata Standardization in PROTECT
-
-Metadata standardization ensures consistent data organization, discoverability, and interoperability across PROTECT platforms and tools. This directory documents the schemas, conventions, and processes that govern how metadata is structured, versioned, and maintained.
-
----
-
-## Conrad Metadata
-
-The Conrad team provides recurring metadata exports and maintains the REDCap database system.
-
-### [`conrad/`](conrad/)
-- **`redcap/`** — REDCap design and specification documentation (Conrad-owned system, in construction)
-- **`monthly_drops/`** — Documentation of Conrad monthly metadata export cadence and process
-- **`clinical_docs/`** — Clinical data handling decisions and structure documentation
-- **`schema_snapshots/`** — Non-sensitive column snapshots documenting export structure evolution
-
-See the README files in each subdirectory for details.
+The current focus is **Conrad Lab metadata**, including:
+- recurring metadata drop conventions (structure + cadence)
+- REDCap design/specification documentation (future-facing; design artifacts)
+- clinical metadata handling documentation
+- non-sensitive schema snapshots (column headers only)
 
 ---
 
-## Directory Structure
+## Current Structure
 
-### [`schemas/`](schemas/)
-- **`current/`** — Active schema definitions and field specifications currently in use
-- **`archive/`** — Historical schema versions and deprecated specifications
+metadata/
+├── README.md
+└── conrad/
+├── clinical_docs/
+├── monthly_drops/
+├── redcap/
+└── schema_snapshots/
 
-Schema evolution is handled iteratively. As schemas are updated, previous versions are moved to archive for reference.
-
-### [`cadence/`](cadence/)
-Documentation of recurring metadata update processes, including:
-- Conrad team monthly metadata export cadence (in progress)
-- Update workflows and expectations
-
-### [`examples/`](examples/)
-- **`conrad/`** — Example metadata files from Conrad team monthly exports
-- **`templates/`** — Blank or fill-in templates for metadata creation
-
-### [`references/`](references/)
-- External documentation sources
-- Metadata inventory and classification records
-- Notes for review and open questions
-- Links to authoritative documentation
-
-### [`_holding_sensitive/`](_holding_sensitive/)
-Files containing potentially sensitive content that require review before committing. These files are intentionally not committed to the repository.
-
-### [`_ambiguous/`](_ambiguous/)
-Files whose classification or destination is unclear and require review.
 
 ---
 
-## Current Schemas
+## Conrad Metadata (Current Focus)
 
-### REDCap Field Specification
-- **Location:** `conrad/redcap/REDCap Field Specification EDITS Version 1.16.2026.xlsx`
-- **Status:** Current (January 2026)
-- **Purpose:** Defines the REDCap database field specification for clinical metadata
-- **Notes:** Includes color-coded annotations indicating field inclusion/exclusion decisions
-- **Authoritative Documentation:** See `conrad/redcap/redcap_file_package_readme.md` (ground truth)
+### `conrad/clinical_docs/`
+Clinical metadata handling documentation provided by the Conrad team.  
+This folder captures the most recent guidance available and may include multiple versions of decision documents.
 
-### Conrad Monthly Export Structure
-- **Location:** `conrad/schema_snapshots/` (non-sensitive column headers only)
-- **Status:** Current structure based on September/December 2025 exports
-- **Purpose:** Documents the structure of Conrad monthly metadata exports
-- **Notes:** Actual export files are sensitive and held in `_holding_sensitive/conrad_monthly_drops/`
+### `conrad/monthly_drops/`
+Documentation describing how Conrad metadata is delivered over time (often event-driven, frequently monthly when new samples are added), and what constitutes the "current" export structure.
 
-### Server Metadata
-- **Status:** Under review
-- **Purpose:** Documents server-based metadata fields (sample handling, wet-lab provenance)
-- **Notes:** See `conrad/redcap/protect_redcap_metadata_readme.md` for architecture overview
+### `conrad/redcap/`
+REDCap documentation for a **Conrad-owned REDCap system currently in construction**.  
+Files here are design/spec artifacts describing field structure and planned access patterns (not live exports).
+
+### `conrad/schema_snapshots/`
+Non-sensitive schema snapshots (column headers only) extracted from Conrad metadata exports to document structure evolution over time without storing sensitive content.
 
 ---
 
-## Schema Evolution
+## Sensitivity and Publishing Guidance
 
-Schema evolution is iterative and in progress. When schemas are updated:
-1. Previous versions are moved to `schemas/archive/`
-2. New versions are placed in `schemas/current/`
-3. Changes are documented in reference materials
-
----
-
-## Conrad Update Cadence
-
-The Conrad team provides monthly metadata exports. See `conrad/monthly_drops/README.md` for details on:
-- Source location on THAR
-- Update cadence (often monthly, event-driven)
-- Export structure evolution
-- Sensitive content handling
+This repository is intended to remain safe to share. As a rule:
+- Do **not** commit raw metadata exports containing sensitive content.
+- Prefer documenting structure via **schema snapshots** (column headers) and written READMEs.
+- If a file's sensitivity is unclear, treat it as sensitive by default and exclude it until reviewed.
 
 ---
 
-## Examples and Templates
+## How to Add New Conrad Metadata Documentation
 
-- **Conrad Examples:** See `examples/conrad/` for dated metadata exports from the Conrad team
-- **Templates:** See `examples/templates/` for blank or fill-in templates
-
----
-
-## External and Sensitive References
-
-- **External Sources:** See `references/external_sources.md` for high-level documentation of external sources
-- **Sensitive Content:** Files in `_holding_sensitive/` are documented at a non-sensitive level in `references/external_sources.md` but are intentionally not committed
-
----
-
-## Adding New Metadata Documentation
-
-When adding new metadata documentation:
-
-1. **Schemas:** Place current schemas in `schemas/current/`, archive older versions in `schemas/archive/`
-2. **Examples:** Add Conrad team examples to `examples/conrad/`, templates to `examples/templates/`
-3. **References:** Add external documentation pointers to `references/`
-4. **Cadence:** Document update processes in `cadence/`
-5. **Sensitive Content:** If unsure about sensitivity, place in `_holding_sensitive/` and document in `references/external_sources.md`
-
-Keep documentation:
-- **Short** and **structured**
-- **Reviewer-friendly**
-- Use "initial / v1 / iterative / in progress" language rather than "finalized"
-- Prefer linking to authoritative existing documentation over duplicating it
-
----
-
-## Open Questions and Review Items
-
-See `references/notes_for_review.md` for:
-- Open questions about schema versioning and processes
-- Ambiguities requiring clarification
----
-
-**End of README**
+1. Add new **REDCap design/spec** materials to `conrad/redcap/` and update `conrad/redcap/README.md`.
+2. When a new metadata drop arrives, update `conrad/monthly_drops/README.md` if cadence or structure changes.
+3. Add/refresh a new **schema snapshot** (column headers only) in `conrad/schema_snapshots/` for structure tracking.
+4. Keep documentation short, structured, and evergreen.
