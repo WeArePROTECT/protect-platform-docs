@@ -43,19 +43,18 @@ This repository documents:
 
 ---
 
-## Platforms and Tools Covered (Initial / v1)
+## Platforms and Tools Covered
 
 This repository includes documentation and pointers for:
 
 ### Platforms
-- ASMA prototype
-- ASMA exemplar platform
-- GenomeDepot
+- **[GenomeDepot](platforms/genomedepot/)** — Web-based platform for storing, browsing, and exploring isolate/genome data and annotations
+- **[ASMA Prototype](platforms/asma-prototype/)** — R&D prototype and vision testbed for exploring multi-omic and isolate data browsing, linking, and exploration concepts
 
-### Visibility Tools
-- Isolate table viewer
-- Isolate taxonomy tree viewer
-- File browser for audit visibility
+### Tools
+- **[PROTECT File Browser](tools/file-browser/)** — Read-only directory browser providing audit visibility into server folder structure and filenames
+- **[Isolate Table Viewer](tools/isolate-table-viewer/)** — Interactive table viewer for isolate taxonomy and metadata with search and filter capabilities
+- **[Taxonomy Treemap Viewer](tools/isolate-taxonomy-treemap-viewer/)** — Interactive treemap visualization for exploring hierarchical taxonomy distribution
 
 Each entry in this repository focuses on **what the platform/tool is**, **what data and metadata it consumes or exposes**, and **where its authoritative implementation docs live**.
 
