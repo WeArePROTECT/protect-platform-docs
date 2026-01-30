@@ -23,8 +23,7 @@ metadata/
 
 ---
 
-## Conrad Metadata (Current Focus)
-
+## Conrad Metadata
 ### `conrad/clinical_docs/`
 Clinical metadata handling documentation provided by the Conrad team.  
 This folder captures the most recent guidance available and may include multiple versions of decision documents.
@@ -50,7 +49,7 @@ This repository is intended to remain safe to share. As a rule:
 
 ---
 
-## How to Add New Conrad Metadata Documentation
+## How to Add New Metadata Documentation
 
 1. Add new **REDCap design/spec** materials to `conrad/redcap/` and update `conrad/redcap/README.md`.
 2. When a new metadata drop arrives, update `conrad/monthly_drops/README.md` if cadence or structure changes.
