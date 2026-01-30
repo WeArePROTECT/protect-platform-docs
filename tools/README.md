@@ -4,3 +4,4 @@ This directory documents supporting tools that provide visibility into PROTECT d
 ## Documented Tools
 
 - **[File Browser](file-browser/)** — Read-only web-based directory browser for `/usr2/people/protect/` providing audit visibility into folder structure and filenames
+- **[Isolate Table Viewer](isolate-table-viewer/)** — Interactive table viewer for PROTECT isolate taxonomy and metadata with search and filter capabilities

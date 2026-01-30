@@ -35,7 +35,6 @@ The Isolate Table Viewer is served through the ASMA FastAPI backend:
 The Isolate Table Viewer is part of a suite of taxonomy visualization tools:
 
 - **[Isolate Treemap Viewer](https://protect.qb3.berkeley.edu/asma/api/taxonomy/treemap)** — Plotly-based treemap visualization of taxonomic hierarchy
-- **[Taxonomy Data (TSV)](https://protect.qb3.berkeley.edu/asma/api/taxonomy/tsv)** — Raw TSV data endpoint for programmatic access
 
 ## Where to access it
 
