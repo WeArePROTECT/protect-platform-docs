@@ -13,7 +13,7 @@ The viewer displays:
 - **Interactive table features** — Search, sort, and filter capabilities via DataTables
 - **Data freshness indicator** — Display of when the underlying data was last updated
 
-The viewer provides read-only access to folder and file structure information. It does not expose file contents, provide downloads, or allow modifications to the underlying data.
+This is a read-only viewer for taxonomy and isolate metadata. It does not support editing or modifying the underlying dataset.
 
 ## Data source and ownership
 
@@ -40,6 +40,12 @@ The Isolate Table Viewer is part of a suite of taxonomy visualization tools:
 ## Where to access it
 
 - **Live table viewer:** https://protect.qb3.berkeley.edu/asma/api/taxonomy/table
+
+## Example table snapshot
+
+Below is an example view of the Isolate Table Viewer interface (search, sort, filters, and export options).
+
+![Isolate Table Viewer preview](images/table_preview.png)
 
 ## Integration with ASMA Prototype
 
