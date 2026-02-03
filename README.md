@@ -58,6 +58,9 @@ This repository includes documentation and pointers for:
 
 Each entry in this repository focuses on **what the platform/tool is**, **what data and metadata it consumes or exposes**, and **where its authoritative implementation docs live**.
 
+### Data Infrastructure
+- **[KBase Lakehouse](data-infrastructure/kbase-lakehouse/)** — Ingestion and operations guide for the KBase Lakehouse environment (MinIO object storage, Delta Lake managed storage, Spark SQL querying)
+
 ---
 
 ## Current State and Iterative Evolution
