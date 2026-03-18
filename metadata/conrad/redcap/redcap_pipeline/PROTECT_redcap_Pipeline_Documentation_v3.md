@@ -2,7 +2,7 @@
 
 **Project:** PROTECT CF Study  
 **Authors:** Spencer Long (Berkeley / Arkin Lab)  
-**Last updated:** March 17, 2026 (v3)  
+**Last updated:** March 18, 2026 (v3)  
 **Pipeline version:** protect_pipeline_v3.py  
 **Notebook version:** PROTECT_Data_Integration_v4.ipynb  
 **Status:** Production — validated and running
@@ -21,7 +21,7 @@
 | **Master merged: 70 → 76 columns** | 6 new APL-derived columns |
 | **SampleType routing rule revised** | Fz/Home Fz samples are no longer treated as categorically excluded from ASMA |
 | **LINKAGE_PATH updated to v3** | `patient_sputum_asma_gold_linkage_table_v3.csv` |
-| **PRO76 open item** | 42 isolates currently assigned to PRO76 in ASMA may belong to PRO76M — pending Sun-Young confirmation |
+| **PRO76 vs PRO76M — resolved** | Both are confirmed distinct samples. PRO76 (Home Fz, frozen) → 42 isolates; PRO76M (Fs, mouth rinse) → 25 isolates. Pipeline correct as-is. Confirmed by Sun-Young Kim (March 18, 2026) |
 
 ---
 
@@ -187,24 +187,24 @@ PIPELINE — protect_pipeline_v3.py / PROTECT_Data_Integration_v4.ipynb
   Step 5    Standardize free-text fields + interim race/ethnicity normalization
   Step 6    Add derived columns (BMI, FEV1/FVC ratio, antibiotic counts)
   Step 7    Data quality flagging
-  Step 8    Save clean REDCap output   →  PROTECT_REDCap_clean.csv
+  Step 8    Save clean REDCap output   →  PROTECT_REDCap_<date>_pipeline_v3.csv
   Step 9    Crosswalk validation
   Step 10   Build master merged table                                [UPDATED in v3]
               → Join Samples + REDCap + ASMA linkage + APL_metadata
               → Add isolation_source_type column
               → Remove fz_sample_has_isolates flag
-            →  PROTECT_master_merged.csv
+            →  PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv
 
 OUTPUTS
-  PROTECT_REDCap_clean.csv       (silver layer — 1 row/sample visit, decoded + flagged)
-  PROTECT_master_merged.csv      (gold layer — 1 row/isolate, all 4 sources joined)
+  PROTECT_REDCap_<date>_pipeline_v3.csv       (silver layer — 1 row/sample visit, decoded + flagged)
+  PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv      (gold layer — 1 row/isolate, all 4 sources joined)
 ```
 
 ---
 
 ## 5. Output Schemas
 
-### Output 1: `PROTECT_REDCap_clean.csv` — Silver Layer
+### Output 1: `PROTECT_REDCap_<date>_pipeline_v3.csv` — Silver Layer
 **Grain:** One row per sample visit  
 **Current shape:** 27 rows × 58 columns  
 **Unchanged from v2.**
@@ -220,7 +220,7 @@ Column groups in order:
 | Antibiotic summary | `n_active_antibiotics`, `any_iv_antibiotics`, `n_inhaled_cycling_on` |
 | Antibiotic detail | Inhaled cycling cols + 22 binary abx columns |
 
-### Output 2: `PROTECT_master_merged.csv` — Gold Layer
+### Output 2: `PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv` — Gold Layer
 **Grain:** One row per bacterial isolate (Fs/Fz isolation samples); one row per sample (omics-only samples with no isolates)  
 **Current shape:** 4,405 rows × 76 columns (was 70 in v2 — 6 APL columns added)  
 
@@ -325,15 +325,16 @@ The `dq_flags` column in both outputs contains pipe-separated flag strings. Rows
 
 ## 9. Known Open Items
 
-### Open Item A: PRO76 vs PRO76M — Lab Verification Needed ⚠️ HIGH
+### ~~Open Item A: PRO76 vs PRO76M~~ — RESOLVED ✅ (March 18, 2026)
 **Owner:** Sun-Young Kim (Berkeley wet lab)  
-**Jira:** CCS-47 (Waiting On Others)
+**Jira:** CCS-47 (Done)
 
-Vishant Gandhi (UCSD) confirmed that the plates corresponding to PRO76 actually came from PRO76M (a fresh Fs mouth rinse sample), not PRO76 (Home Fz frozen). However, the ASMA linkage table currently assigns those 42 isolates to `PRO76`. This is a labelling discrepancy between Vishant's isolation sheet and Sun-Young's notes.
+Sun-Young Kim confirmed via documentation (March 18, 2026) that PRO76 and PRO76M are two genuinely distinct samples for the same patient, both present in the PROTECT Samples sheet (created by Vishant Gandhi):
 
-**Current state in pipeline:** PRO76 is classified as `frozen_only` in `isolation_source_type` because APL_metadata records it as `FZ`. If the ASMA linkage table is corrected to PRO76M, these isolates will automatically reclassify as `mouth_rinse` (PRO76M is an Fs fresh sample) on the next pipeline run.
+- **PRO76** (Home Fz, frozen sputum) → 42 ASMA isolates → `isolation_source_type = frozen_only` ✅
+- **PRO76M** (Fs, fresh mouth rinse) → 25 ASMA isolates → `isolation_source_type = mouth_rinse` ✅
 
-**Resolution path:** Sun-Young confirms whether the 42 ASMA isolates should be reassigned from PRO76 → PRO76M → ASMA linkage table corrected → pipeline re-run.
+Sun-Young assigned separate APL IDs to each in APL_metadata, and both counts match the pipeline output exactly. Vishant's earlier comment that "plates from PRO76 should be PRO76M" was likely a confusion — his own Samples sheet lists both as separate entries, which is the authoritative record. **The pipeline requires no changes.**
 
 ### Open Item B: Vishant's Remaining Frozen Plates — Pipeline Ready ✅
 **Owner:** Vishant Gandhi (UCSD) / Sun-Young Kim (Berkeley)
@@ -346,10 +347,12 @@ Vishant provided a list of 24 PRO IDs plated from frozen sputum. Of these, only 
 
 Pending Dahen completing the REDCap dropdown conversion for race and ethnicity. Once live, verify on the next export that these fields arrive as numeric codes, then retire the interim normalization maps from Section 1 of the notebook.
 
-### Open Item D: Sun-Young Metadata Documentation for Ad Hoc Frozen Isolations 📋 MEDIUM
+### Open Item D: Ad Hoc Frozen Isolation Provenance Notes in ASMA_metadata_SK 📋 LOW
 **Owner:** Sun-Young Kim (Berkeley wet lab)
 
-Sun-Young noted that the ad hoc frozen isolations (PRO8, PRO15, PRO22, PRO23, PRO30, PRO76) were not formally documented by UCSD at the time. She intends to create metadata entries to reflect this context. This will improve the completeness of APL_metadata and the pipeline's `isolation_source_type` classification for future reference.
+The ad hoc frozen isolations (PRO8, PRO15, PRO22, PRO23, PRO30, PRO76) were not formally documented by UCSD at the time they occurred. The biological and methodological context is fully documented in this pipeline documentation (Section 2D) and in the GitHub active issues log. The outstanding question is whether it is also useful to add a brief provenance note at the ASMA record level in `ASMA_metadata_SK` — for example a notes field entry reading "frozen sputum, initial diversity sweep, not recorded by UCSD at time of collection."
+
+Sun-Young has been asked whether `ASMA_metadata_SK` has an appropriate notes or comments field for this purpose. If such a field exists, adding short notes for these six PRO IDs would help anyone reading the ASMA records directly understand the isolation context without needing to cross-reference pipeline documentation. If no suitable field exists, the pipeline documentation is sufficient and no further action is needed.
 
 ---
 
@@ -400,8 +403,8 @@ SOURCE (UCSD / Vishant Gandhi — context only)
 PIPELINE (Berkeley / Spencer Long)
   protect_pipeline_v3.py  /  PROTECT_Data_Integration_v4.ipynb
     ↓ outputs to PROTECT server
-  PROTECT_REDCap_clean.csv         (silver — visit-level clinical data)
-  PROTECT_master_merged.csv        (gold — isolate-level, all 4 sources joined)
+  PROTECT_REDCap_3_2_2026_pipeline_v3.csv         (silver — visit-level clinical data)
+  PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv  (gold — isolate-level, all 4 sources joined)
     ↓ loaded into
   KBase data lakehouse             (for genomics and downstream analysis)
 ```
@@ -414,8 +417,8 @@ PIPELINE (Berkeley / Spencer Long)
 |---|---|---|---|
 | `protect_pipeline_v3.py` | Main pipeline script — run monthly | Berkeley | Update `REDCAP_RAW_PATH` and `APL_METADATA_PATH` at top |
 | `PROTECT_Data_Integration_v4.ipynb` | Interactive notebook version | Berkeley | Same logic as pipeline script |
-| `PROTECT_REDCap_clean.csv` | Output: silver layer, 1 row/visit | Pipeline output | Overwritten each run |
-| `PROTECT_master_merged.csv` | Output: gold layer, 1 row/isolate | Pipeline output | Overwritten each run — now 76 cols |
+| `PROTECT_REDCap_<date>_pipeline_v3.csv` | Output: silver layer, 1 row/visit | Pipeline output | Date = raw REDCap export date (e.g. `3_2_2026`) |
+| `PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv` | Output: gold layer, 1 row/isolate | Pipeline output | 76 cols; date matches silver layer |
 | `PROTECT_RedCapDataExport_*.csv` | Input: raw REDCap export | UCSD / Dahen | Update path each month |
 | `patient_sputum_asma_gold_linkage_table_v3.csv` | Input: ASMA isolate records | Berkeley / Sun-Young | Updated from v2 |
 | `PROTECT_Samples_-_Sheet1__1_.csv` | Input: sample bridge sheet | Berkeley | |
