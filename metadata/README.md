@@ -20,13 +20,15 @@ a consistent pattern.
 metadata/
 ├── README.md
 ├── arkin/
+│   ├── README.md
 │   └── asma-gold-linkage/
 └── conrad/
+    ├── README.md
     ├── clinical_docs/
     ├── monthly_drops/
     ├── redcap/
-    ├── schema_snapshots/
-    └── README.md
+    │   └── redcap_pipeline/
+    └── schema_snapshots/
 
 
 ---
@@ -41,20 +43,13 @@ See [`metadata/arkin/asma-gold-linkage/README.md`](arkin/asma-gold-linkage/READM
 
 ### Conrad Lab
 
-The only fully documented metadata source at present is the **Conrad Lab**.
-All Conrad-specific documentation is contained within:
-
-metadata/conrad/
-
+Conrad Lab metadata documentation is contained within `metadata/conrad/`.
 
 See `metadata/conrad/README.md` for details on:
 - metadata delivery cadence
 - REDCap system design and specifications
 - clinical metadata handling documentation
 - schema snapshots documenting structure evolution
-
-Future metadata sources should be added as **peer directories** alongside
-`conrad/`.
 
 ---
 
