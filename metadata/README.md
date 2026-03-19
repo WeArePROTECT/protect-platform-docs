@@ -19,17 +19,25 @@ a consistent pattern.
 
 metadata/
 ├── README.md
+├── arkin/
+│   └── asma-gold-linkage/
 └── conrad/
-├── clinical_docs/
-├── monthly_drops/
-├── redcap/
-├── schema_snapshots/
-└── README.md
+    ├── clinical_docs/
+    ├── monthly_drops/
+    ├── redcap/
+    ├── schema_snapshots/
+    └── README.md
 
 
 ---
 
 ## Current Metadata Sources
+
+### Arkin Lab
+
+Arkin Lab isolate metadata — ASMA isolate gold linkage table, schema documentation, and build provenance.
+
+See [`metadata/arkin/asma-gold-linkage/README.md`](arkin/asma-gold-linkage/README.md) for details.
 
 ### Conrad Lab
 
