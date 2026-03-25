@@ -1,8 +1,8 @@
 # PROTECT REDCap Pipeline — Data Reference
 
-**Pipeline version:** v3 (`protect_pipeline_v3.py`)  
-**Notebook version:** v4 (`PROTECT_Data_Integration_v4.ipynb`)  
-**Last updated:** March 17, 2026  
+**Pipeline version:** v4 (`protect_pipeline_v4.py`)
+**Notebook version:** v5 (`PROTECT_Data_Integration_v5.ipynb`)
+**Last updated:** March 25, 2026
 **Maintainer:** Spencer Long — Berkeley / Arkin Lab  
 **Status:** Production — validated and running
 
@@ -26,10 +26,10 @@ The pipeline described here takes those two streams of data and joins them toget
 
 The result is two files:
 
-- **`PROTECT_REDCap_3_2_2026_pipeline_v3.csv`** — one row per patient sample visit, with clinical data decoded into human-readable form and validated
-- **`PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv`** — one row per bacterial isolate, with the isolate's full clinical and sample context attached
+- **`PROTECT_REDCap_clean_3_25_26.csv`** — one row per patient sample visit, with clinical data decoded into human-readable form and validated
+- **`PROTECT_REDCap_merged_3_25_26.csv`** — one row per bacterial isolate (or per omics-only sample with no isolates yet), with the full clinical and sample context attached
 
-The naming convention encodes provenance directly: `3_2_2026` is the date of the raw REDCap export the file was derived from, and `pipeline_v3` identifies the processing logic version.
+The naming convention encodes the run date directly: `3_25_26` is the date the pipeline was run. As of v4, the gold-layer output also includes 163 omics-only samples (Zengler Lab metaG/metaRS) that were never sent to Berkeley for isolation — these appear with `has_isolates=False` to enable full cohort visibility.
 
 ---
 
@@ -39,27 +39,27 @@ The naming convention encodes provenance directly: `3_2_2026` is the date of the
 Conrad_Lab/metadata/RedCapDataExports/
 ├── raw/
 │   └── PROTECT_RedCapDataExport_3.2.2026 (raw data).csv       ← untouched source
-├── pipeline_outputs/
-│   ├── 2026-03-17/
-│   │   ├── PROTECT_REDCap_3_2_2026_pipeline_v3.csv
-│   │   └── PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv
+├── data_reception_pipeline_out/
+│   ├── 3_25_26/                                                 ← most recent run (v4)
+│   │   ├── PROTECT_REDCap_clean_3_25_26.csv
+│   │   └── PROTECT_REDCap_merged_3_25_26.csv
 │   └── latest/                                                  ← always current run
-│       ├── PROTECT_REDCap_3_2_2026_pipeline_v3.csv
-│       └── PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv
+│       ├── PROTECT_REDCap_clean_3_25_26.csv
+│       └── PROTECT_REDCap_merged_3_25_26.csv
 └── reference/
     ├── PROTECT_DataDictionary_2026-03-06.csv
     └── PROTECT_Samples_-_Sheet1__1_.csv
 ```
 
-**Naming convention:** `PROTECT_<descriptor>_<raw_data_date>_<pipeline_version>.csv`
-- `<raw_data_date>` = date of the REDCap export the file was derived from (not the run date)
-- `<pipeline_version>` = version of the processing pipeline used
+**Naming convention (v4):** `PROTECT_REDCap_<descriptor>_<run_date>.csv`
+- `<descriptor>` = `clean` (silver layer) or `merged` (gold layer)
+- `<run_date>` = date the pipeline was run (e.g. `3_25_26`)
 
 **`latest/`** always contains a copy of the most recent pipeline run. Point notebooks and downstream scripts here for a stable path that does not need updating between deliveries.
 
 ---
 
-## Output File 1: `PROTECT_REDCap_3_2_2026_pipeline_v3.csv`
+## Output File 1: `PROTECT_REDCap_clean_3_25_26.csv`
 
 ### What it is
 
@@ -95,17 +95,17 @@ Rows are never dropped. Issues are documented in the `dq_flags` column as pipe-s
 
 ---
 
-## Output File 2: `PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv`
+## Output File 2: `PROTECT_REDCap_merged_3_25_26.csv`
 
 ### What it is
 
-One row per bacterial isolate. This is the gold-layer analytical dataset — every PROTECT isolate in the ASMA collection joined to its full clinical and sample context. This is the primary file for any analysis connecting bacterial genomics to patient clinical outcomes.
+One row per bacterial isolate, plus one row per omics-only sample with no isolates yet. This is the gold-layer analytical dataset — every PROTECT isolate in the ASMA collection joined to its full clinical and sample context, now including 163 omics-only samples (Zengler Lab metaG/metaRS, `has_isolates=False`). This is the primary file for any analysis connecting bacterial genomics to patient clinical outcomes.
 
-**Current shape:** 4,405 rows × 76 columns  
-**Unique patients:** 61  
-**Unique samples:** 241  
-**Unique isolates:** 4,259 (plus 146 rows for samples with no isolates yet)  
-**Source:** PROTECT Samples sheet + REDCap silver layer + ASMA linkage table + APL metadata → pipeline Step 10
+**Current shape:** 4,405 rows × 76 columns
+**Unique patients:** 61
+**Unique samples:** 241
+**Unique isolates:** 4,259 (plus 146 rows for samples with no isolates yet)
+**Source:** PROTECT Samples sheet + REDCap silver layer + ASMA linkage table v4_0 + APL metadata → pipeline Step 10
 
 ### Four data sources joined
 
@@ -171,7 +171,7 @@ One row per bacterial isolate. This is the gold-layer analytical dataset — eve
 | File | Description | Owner |
 |---|---|---|
 | `PROTECT_RedCapDataExport_<date>.csv` | Raw REDCap export — wide format, one row per patient | Dahen Ibarra Munoz, UCSD |
-| `patient_sputum_asma_gold_linkage_table_v3.csv` | ASMA isolate records — one row per isolate | Sun-Young Kim, Berkeley |
+| `patient_sputum_asma_gold_linkage_table_v4_0.csv` | ASMA isolate records — one row per isolate (now includes 163 omics-only rows) | Sun-Young Kim, Berkeley |
 | `PROTECT_Samples_-_Sheet1__1_.csv` | Sample bridge sheet — maps sample numbers to PRO IDs | Berkeley / Arkin Lab |
 | `APL_metadata_20260303.xlsx` | Fresh vs frozen isolation origin per sample | Sun-Young Kim, Berkeley |
 
@@ -184,19 +184,20 @@ One row per bacterial isolate. This is the gold-layer analytical dataset — eve
 5. **Normalize** race/ethnicity free-text (interim — pending REDCap dropdown conversion by UCSD)
 6. **Derive** calculated columns: BMI, FEV1/FVC ratio, antibiotic counts
 7. **Flag** data quality issues into `dq_flags` column
-8. **Save** silver-layer output: `PROTECT_REDCap_<date>_pipeline_v3.csv`
+8. **Save** silver-layer output: `PROTECT_REDCap_clean_<run_date>.csv`
 9. **Validate** crosswalk — confirms 0 patient ID mismatches between REDCap and ASMA
-10. **Build** gold-layer output: join Samples + REDCap + ASMA + APL; add `isolation_source_type`; save `PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv`
+10. **Build** gold-layer output: join Samples + REDCap + ASMA linkage v4_0 + APL; add `isolation_source_type`; include omics-only rows; save `PROTECT_REDCap_merged_<run_date>.csv`
 
 ### Running the pipeline
 
 ```bash
 # Command line
-python protect_pipeline_v3.py
+python protect_pipeline_v4.py
 
 # Or open the notebook and update Section 0, then run all cells:
-# PROTECT_Data_Integration_v4.ipynb
+# PROTECT_Data_Integration_v5.ipynb
 # Update REDCAP_RAW_PATH to the new export file
+# Update the output directory and filename date suffix (e.g. 3_25_26 → 4_15_26)
 # If new APL_metadata received, update APL_METADATA_PATH too
 ```
 
@@ -223,7 +224,8 @@ When a new export arrives: update `REDCAP_RAW_PATH` in Section 0 of the notebook
 
 | Document | Location | Description |
 |---|---|---|
-| `PROTECT_Pipeline_Documentation_v3.md` | This folder | Full pipeline technical reference — input schemas, code maps, DQ flags, open items |
+| `PROTECT_REDCap_Pipeline_Documentation_v4.md` | This folder | Full pipeline technical reference for v4 — input schemas, code maps, DQ flags, open items, omics-only sample context |
+| `PROTECT_REDCap_Pipeline_Documentation_v3.md` | This folder | Prior version reference — kept for historical context |
 | `redcap_pipeline_active_issues.md` | `operations/conrad/` | Running log of open items and current status |
 | `PROTECT_Dahen_Call_Questions_v6.docx` | PROTECT server | Q&A log with Conrad team covering all confirmed data decisions |
 | `PROTECT_DataDictionary_2026-03-06.csv` | PROTECT server / `reference/` | Authoritative REDCap field definitions — do not modify |
