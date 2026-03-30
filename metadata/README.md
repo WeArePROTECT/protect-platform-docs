@@ -45,6 +45,8 @@ See [`metadata/arkin/asma-gold-linkage/README.md`](arkin/asma-gold-linkage/READM
 
 Conrad Lab metadata documentation is contained within `metadata/conrad/`.
 
+> **Production pipeline:** The [PROTECT Data Integration Pipeline](../data-infrastructure/integration-pipeline/README.md) (Stage 1 and Stage 2) is the production system for cleaning and merging REDCap clinical data with isolate and sample records.
+
 See `metadata/conrad/README.md` for details on:
 - metadata delivery cadence
 - REDCap system design and specifications

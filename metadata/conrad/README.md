@@ -49,6 +49,12 @@ This repository should remain safe to share. Do not commit raw Conrad metadata e
 
 ---
 
+## Production Pipeline
+
+The [PROTECT Data Integration Pipeline](../../data-infrastructure/integration-pipeline/README.md) operationalizes REDCap data in production. Stage 1 cleans and decodes the REDCap export; Stage 2 merges it with the isolate/sample linkage table to produce the integrated analysis-ready output.
+
+---
+
 ## Updating This Documentation
 
 When new Conrad materials arrive:

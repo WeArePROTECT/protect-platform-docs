@@ -60,6 +60,7 @@ Each entry in this repository focuses on **what the platform/tool is**, **what d
 
 ### Data Infrastructure
 - **[KBase Lakehouse](data-infrastructure/kbase-lakehouse/)** — Ingestion and operations guide for the KBase Lakehouse environment (MinIO object storage, Delta Lake managed storage, Spark SQL querying)
+- **[PROTECT Data Integration Pipeline](data-infrastructure/integration-pipeline/)** — Production system (v1.0) unifying all four PROTECT data streams (isolate records, clinical metadata, isolation provenance, multi-omics) into analysis-ready linked tables
 
 ---
 
