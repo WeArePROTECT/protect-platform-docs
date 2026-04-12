@@ -2,7 +2,7 @@
 
 **Project:** PROTECT CF Study  
 **Authors:** Spencer Long (Berkeley / Arkin Lab)  
-**Last updated:** March 18, 2026 (v3)  
+**Last updated:** March 17, 2026 (v3)  
 **Pipeline version:** protect_pipeline_v3.py  
 **Notebook version:** PROTECT_Data_Integration_v4.ipynb  
 **Status:** Production — validated and running
@@ -21,7 +21,7 @@
 | **Master merged: 70 → 76 columns** | 6 new APL-derived columns |
 | **SampleType routing rule revised** | Fz/Home Fz samples are no longer treated as categorically excluded from ASMA |
 | **LINKAGE_PATH updated to v3** | `patient_sputum_asma_gold_linkage_table_v3.csv` |
-| **PRO76 vs PRO76M — resolved** | Both are confirmed distinct samples. PRO76 (Home Fz, frozen) → 42 isolates; PRO76M (Fs, mouth rinse) → 25 isolates. Pipeline correct as-is. Confirmed by Sun-Young Kim (March 18, 2026) |
+| **PRO76 open item** | 42 isolates currently assigned to PRO76 in ASMA may belong to PRO76M — pending Sun-Young confirmation |
 
 ---
 
@@ -187,24 +187,24 @@ PIPELINE — protect_pipeline_v3.py / PROTECT_Data_Integration_v4.ipynb
   Step 5    Standardize free-text fields + interim race/ethnicity normalization
   Step 6    Add derived columns (BMI, FEV1/FVC ratio, antibiotic counts)
   Step 7    Data quality flagging
-  Step 8    Save clean REDCap output   →  PROTECT_REDCap_<date>_pipeline_v3.csv
+  Step 8    Save clean REDCap output   →  PROTECT_REDCap_clean.csv
   Step 9    Crosswalk validation
   Step 10   Build master merged table                                [UPDATED in v3]
               → Join Samples + REDCap + ASMA linkage + APL_metadata
               → Add isolation_source_type column
               → Remove fz_sample_has_isolates flag
-            →  PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv
+            →  PROTECT_master_merged.csv
 
 OUTPUTS
-  PROTECT_REDCap_<date>_pipeline_v3.csv       (silver layer — 1 row/sample visit, decoded + flagged)
-  PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv      (gold layer — 1 row/isolate, all 4 sources joined)
+  PROTECT_REDCap_clean.csv       (silver layer — 1 row/sample visit, decoded + flagged)
+  PROTECT_master_merged.csv      (gold layer — 1 row/isolate, all 4 sources joined)
 ```
 
 ---
 
 ## 5. Output Schemas
 
-### Output 1: `PROTECT_REDCap_<date>_pipeline_v3.csv` — Silver Layer
+### Output 1: `PROTECT_REDCap_clean.csv` — Silver Layer
 **Grain:** One row per sample visit  
 **Current shape:** 27 rows × 58 columns  
 **Unchanged from v2.**
@@ -220,7 +220,7 @@ Column groups in order:
 | Antibiotic summary | `n_active_antibiotics`, `any_iv_antibiotics`, `n_inhaled_cycling_on` |
 | Antibiotic detail | Inhaled cycling cols + 22 binary abx columns |
 
-### Output 2: `PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv` — Gold Layer
+### Output 2: `PROTECT_master_merged.csv` — Gold Layer
 **Grain:** One row per bacterial isolate (Fs/Fz isolation samples); one row per sample (omics-only samples with no isolates)  
 **Current shape:** 4,405 rows × 76 columns (was 70 in v2 — 6 APL columns added)  
 
@@ -295,13 +295,15 @@ All confirmed from `PROTECT_DataDictionary_2026-03-06.csv`. Unchanged from v2.
 
 ---
 
-## 7. Race/Ethnicity Interim Normalization
+## 7. Race/Ethnicity Normalization
 
-As of the March 2, 2026 export, the `race` and `ethnicity` fields arrive as free-text strings rather than numeric dropdown codes. Dahen confirmed on the March 5, 2026 call that these fields will be converted to dropdowns in REDCap (Q7 resolution). Once that conversion is live and a new export is received, the fields will arrive as numeric codes and decode automatically through CODE_MAPS.
+~~**[Interim normalization path retired — April 12, 2026]**~~
 
-**Until then**, the pipeline applies an interim normalization step in Step 5 that maps known free-text values to their canonical equivalents. Any unrecognized value surfaces as `FREE_TEXT_NEEDS_REVIEW: <value>` — never silently converted or dropped. Normalized rows receive a `race_ethnicity_interim_normalized|verify_on_next_export` DQ flag.
+As of the March 30, 2026 REDCap delivery (confirmed in pipeline run 4/12/26), the `race` and `ethnicity` fields now arrive as numeric dropdown codes (race: 2, 3, 5, 6, 7 — ethnicity: 1, 2) across all visit blocks. The REDCap dropdown conversion is live.
 
-**Action required on every new export:** Check whether race/ethnicity now arrive as numeric codes. If yes, retire `RACE_FREE_TEXT_MAP` and `ETHNICITY_FREE_TEXT_MAP` from Section 1 of the notebook — the fields will decode automatically. If still free-text, update the maps with any new values observed.
+Race and ethnicity now decode automatically through `CODE_MAPS` in Step 4, the same as all other coded fields. The `RACE_FREE_TEXT_MAP` and `ETHNICITY_FREE_TEXT_MAP` interim normalization path in Step 5 **must be retired** — tracked as CCS-57. Until CCS-57 ships, the pipeline will continue generating `race_ethnicity_interim_normalized|verify_on_next_export` flags on every row, which is now a code artifact rather than a real data quality signal.
+
+> **Note:** The three race/ethnicity interim-normalization DQ flags (`race_ethnicity_interim_normalized|verify_on_next_export`, `race_free_text_unrecognized|manual_review_required`, `ethnicity_free_text_unrecognized|manual_review_required`) will be removed from the pipeline when CCS-57 is implemented.
 
 ---
 
@@ -315,9 +317,9 @@ The `dq_flags` column in both outputs contains pipe-separated flag strings. Rows
 | `lung_function_spirometry_not_performed` | Patient 534: spirometry not performed at this visit (~10% of visits). NaN in lung function fields is expected. | Treat as missing — do not impute |
 | `multi_sample_visit_metadata_duplicated` | Two samples collected at same visit (e.g. `7, 8`). Clinical metadata is intentionally identical for both rows — confirmed by Dahen. | Be aware when aggregating by visit |
 | `contains_unknown_code` | A decoded field has a code value not in the code map. Should not appear with current dictionary. | Update CODE_MAPS in Section 1 and re-run |
-| `race_ethnicity_interim_normalized\|verify_on_next_export` | Row had free-text race/ethnicity values normalized by interim map. | Verify on next export whether REDCap dropdown conversion is live |
-| `race_free_text_unrecognized\|manual_review_required` | Race value could not be mapped — manual review needed. | Investigate and update `RACE_FREE_TEXT_MAP` |
-| `ethnicity_free_text_unrecognized\|manual_review_required` | Ethnicity value could not be mapped — manual review needed. | Investigate and update `ETHNICITY_FREE_TEXT_MAP` |
+| `race_ethnicity_interim_normalized\|verify_on_next_export` | **⚠️ DEPRECATED (CCS-57)** — code artifact now that REDCap dropdown is live. Will be removed when CCS-57 ships. | No action required |
+| `race_free_text_unrecognized\|manual_review_required` | **⚠️ DEPRECATED (CCS-57)** — no longer applicable. Will be removed when CCS-57 ships. | No action required |
+| `ethnicity_free_text_unrecognized\|manual_review_required` | **⚠️ DEPRECATED (CCS-57)** — no longer applicable. Will be removed when CCS-57 ships. | No action required |
 
 > **Removed in v3:** The `fz_sample_has_isolates|sampletype_may_be_miscoded|needs_lab_verification` flag has been removed. The frozen→isolation workflow has been confirmed as valid biology (see Section 2D). These rows are no longer anomalies and are correctly classified via `isolation_source_type`.
 
@@ -325,34 +327,31 @@ The `dq_flags` column in both outputs contains pipe-separated flag strings. Rows
 
 ## 9. Known Open Items
 
-### ~~Open Item A: PRO76 vs PRO76M~~ — RESOLVED ✅ (March 18, 2026)
+### Open Item A: PRO76 vs PRO76M — Lab Verification Needed ⚠️ HIGH
 **Owner:** Sun-Young Kim (Berkeley wet lab)  
-**Jira:** CCS-47 (Done)
+**Jira:** CCS-47 (Waiting On Others)
 
-Sun-Young Kim confirmed via documentation (March 18, 2026) that PRO76 and PRO76M are two genuinely distinct samples for the same patient, both present in the PROTECT Samples sheet (created by Vishant Gandhi):
+Vishant Gandhi (UCSD) confirmed that the plates corresponding to PRO76 actually came from PRO76M (a fresh Fs mouth rinse sample), not PRO76 (Home Fz frozen). However, the ASMA linkage table currently assigns those 42 isolates to `PRO76`. This is a labelling discrepancy between Vishant's isolation sheet and Sun-Young's notes.
 
-- **PRO76** (Home Fz, frozen sputum) → 42 ASMA isolates → `isolation_source_type = frozen_only` ✅
-- **PRO76M** (Fs, fresh mouth rinse) → 25 ASMA isolates → `isolation_source_type = mouth_rinse` ✅
+**Current state in pipeline:** PRO76 is classified as `frozen_only` in `isolation_source_type` because APL_metadata records it as `FZ`. If the ASMA linkage table is corrected to PRO76M, these isolates will automatically reclassify as `mouth_rinse` (PRO76M is an Fs fresh sample) on the next pipeline run.
 
-Sun-Young assigned separate APL IDs to each in APL_metadata, and both counts match the pipeline output exactly. Vishant's earlier comment that "plates from PRO76 should be PRO76M" was likely a confusion — his own Samples sheet lists both as separate entries, which is the authoritative record. **The pipeline requires no changes.**
+**Resolution path:** Sun-Young confirms whether the 42 ASMA isolates should be reassigned from PRO76 → PRO76M → ASMA linkage table corrected → pipeline re-run.
 
 ### Open Item B: Vishant's Remaining Frozen Plates — Pipeline Ready ✅
 **Owner:** Vishant Gandhi (UCSD) / Sun-Young Kim (Berkeley)
 
 Vishant provided a list of 24 PRO IDs plated from frozen sputum. Of these, only 3 (PRO8, PRO22, PRO23) currently have ASMA isolates. The remaining 21 (PRO9, 16, 19, 21, 24, 33, 42, 60, 73, 78, 81, 82, 90, 101, 106, 123, 124, 125, 127, 131, 139) were plated but are not yet banked. The pipeline will handle these correctly when they appear in future linkage table updates — no false anomaly flag will trigger.
 
-### Open Item C: Race/Ethnicity Dropdown Conversion 📋 MEDIUM
+### Open Item C: Race/Ethnicity Dropdown Conversion ✅ RESOLVED
 **Owner:** Dahen (REDCap), Spencer (pipeline verification)  
-**Jira:** CCS-48
+**Jira:** CCS-48 (Done — April 12, 2026)
 
-Pending Dahen completing the REDCap dropdown conversion for race and ethnicity. Once live, verify on the next export that these fields arrive as numeric codes, then retire the interim normalization maps from Section 1 of the notebook.
+Confirmed live in the March 30, 2026 REDCap delivery. All race and ethnicity fields now arrive as numeric dropdown codes across all visit blocks. Pending pipeline code update to decode natively and retire the interim normalization path — tracked as CCS-57.
 
-### Open Item D: Ad Hoc Frozen Isolation Provenance Notes in ASMA_metadata_SK 📋 LOW
+### Open Item D: Sun-Young Metadata Documentation for Ad Hoc Frozen Isolations 📋 MEDIUM
 **Owner:** Sun-Young Kim (Berkeley wet lab)
 
-The ad hoc frozen isolations (PRO8, PRO15, PRO22, PRO23, PRO30, PRO76) were not formally documented by UCSD at the time they occurred. The biological and methodological context is fully documented in this pipeline documentation (Section 2D) and in the GitHub active issues log. The outstanding question is whether it is also useful to add a brief provenance note at the ASMA record level in `ASMA_metadata_SK` — for example a notes field entry reading "frozen sputum, initial diversity sweep, not recorded by UCSD at time of collection."
-
-Sun-Young has been asked whether `ASMA_metadata_SK` has an appropriate notes or comments field for this purpose. If such a field exists, adding short notes for these six PRO IDs would help anyone reading the ASMA records directly understand the isolation context without needing to cross-reference pipeline documentation. If no suitable field exists, the pipeline documentation is sufficient and no further action is needed.
+Sun-Young noted that the ad hoc frozen isolations (PRO8, PRO15, PRO22, PRO23, PRO30, PRO76) were not formally documented by UCSD at the time. She intends to create metadata entries to reflect this context. This will improve the completeness of APL_metadata and the pipeline's `isolation_source_type` classification for future reference.
 
 ---
 
@@ -367,10 +366,9 @@ When a new REDCap export arrives:
 5. Review the Section 9 summary report output:
    - ✅ Crosswalk validation passes with 0 patient ID mismatches
    - ✅ No `UNKNOWN_CODE_X` values in DQ flags
-   - ✅ `race_ethnicity_interim_normalized` flag disappears if REDCap dropdown is now live
    - ✅ Row and patient counts increased as expected
    - ✅ `isolation_source_type` breakdown looks consistent with expectations
-   - ✅ No `FREE_TEXT_NEEDS_REVIEW` values in race/ethnicity fields
+   - ~~`race_ethnicity_interim_normalized` flag disappears~~ — REDCap dropdown is live; this flag is now a code artifact pending CCS-57
 6. Archive previous output CSVs before overwriting
 
 Alternatively run `python protect_pipeline_v3.py` directly from the command line.
@@ -403,8 +401,8 @@ SOURCE (UCSD / Vishant Gandhi — context only)
 PIPELINE (Berkeley / Spencer Long)
   protect_pipeline_v3.py  /  PROTECT_Data_Integration_v4.ipynb
     ↓ outputs to PROTECT server
-  PROTECT_REDCap_3_2_2026_pipeline_v3.csv         (silver — visit-level clinical data)
-  PROTECT_clinical_isolate_linked_3_2_2026_pipeline_v3.csv  (gold — isolate-level, all 4 sources joined)
+  PROTECT_REDCap_clean.csv         (silver — visit-level clinical data)
+  PROTECT_master_merged.csv        (gold — isolate-level, all 4 sources joined)
     ↓ loaded into
   KBase data lakehouse             (for genomics and downstream analysis)
 ```
@@ -417,8 +415,8 @@ PIPELINE (Berkeley / Spencer Long)
 |---|---|---|---|
 | `protect_pipeline_v3.py` | Main pipeline script — run monthly | Berkeley | Update `REDCAP_RAW_PATH` and `APL_METADATA_PATH` at top |
 | `PROTECT_Data_Integration_v4.ipynb` | Interactive notebook version | Berkeley | Same logic as pipeline script |
-| `PROTECT_REDCap_<date>_pipeline_v3.csv` | Output: silver layer, 1 row/visit | Pipeline output | Date = raw REDCap export date (e.g. `3_2_2026`) |
-| `PROTECT_clinical_isolate_linked_<date>_pipeline_v3.csv` | Output: gold layer, 1 row/isolate | Pipeline output | 76 cols; date matches silver layer |
+| `PROTECT_REDCap_clean.csv` | Output: silver layer, 1 row/visit | Pipeline output | Overwritten each run |
+| `PROTECT_master_merged.csv` | Output: gold layer, 1 row/isolate | Pipeline output | Overwritten each run — now 76 cols |
 | `PROTECT_RedCapDataExport_*.csv` | Input: raw REDCap export | UCSD / Dahen | Update path each month |
 | `patient_sputum_asma_gold_linkage_table_v3.csv` | Input: ASMA isolate records | Berkeley / Sun-Young | Updated from v2 |
 | `PROTECT_Samples_-_Sheet1__1_.csv` | Input: sample bridge sheet | Berkeley | |
