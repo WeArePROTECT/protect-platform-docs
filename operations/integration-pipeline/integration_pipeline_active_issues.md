@@ -1,8 +1,8 @@
 # PROTECT Data Integration Pipeline — Active Issues & Ongoing Work
 
-**Last updated:** March 30, 2026
+**Last updated:** May 6, 2026
 **Maintainer:** Spencer Long (Arkin Lab / LBNL)
-**Related pipeline:** PROTECT Data Integration Pipeline v1.0
+**Related pipeline:** PROTECT Data Integration Pipeline v1.1 (Stage 4 added 2026-05-06)
 **Server path:** `/usr2/people/protect/Arkin_Lab/protect_data/protect_data_integration_pipeline/`
 
 This document is a living record of open items, pending decisions, and things being actively watched for this pipeline. It is updated as issues are resolved or new ones arise. It is written for two audiences — a plain-language summary first, followed by technical detail.
@@ -16,9 +16,8 @@ This document is a living record of open items, pending decisions, and things be
 | 1 | Vishant mouthrinse sample registration (PRO*M/PRO*MHD) | Vishant Gandhi | ✅ Yes | ⏳ Waiting |
 | 2 | Patient 107 / PRO240 patient_id confirmation | Sun-Young Kim | ✅ Yes | 📋 Requested |
 | 3 | PRO76 → PRO76M reassignment (42 isolates, Jira CCS-47) | Sun-Young Kim | ⚠️ Partial | ⏳ Waiting |
-| 4 | Race/ethnicity free-text → dropdown conversion (Jira CCS-48) | Dahen Ibarra Munoz | ❌ No | ⏳ Waiting |
-| 5 | 5 unregistered tracking sheet samples (PRO35, PRO159M, PRO160M, PRO161M, PRO196M) | Sun-Young Kim | ⚠️ Partial | 📋 Requested |
-| 6 | Emma's MIND mapping file not on server (`ko_kegg_uniref_pathway_manuallycurated.tsv`) | Emma Rooholfada | ✅ Yes (blocks MIND re-run) | 📋 Requested |
+| 4 | 5 unregistered tracking sheet samples (PRO35, PRO159M, PRO160M, PRO161M, PRO196M) | Sun-Young Kim | ⚠️ Partial | 📋 Requested |
+| 5 | Emma's MIND mapping file not on server (`ko_kegg_uniref_pathway_manuallycurated.tsv`) | Emma Rooholfada | ✅ Yes (blocks MIND re-run) | 📋 Requested |
 
 ---
 
@@ -65,21 +64,7 @@ In the current integrated output:
 
 ---
 
-## Issue 4: Race/Ethnicity Free-Text → Dropdown Conversion
-
-### Plain language
-
-In the current REDCap export, patients' race and ethnicity fields were entered as free-text rather than from a standardized dropdown. The pipeline applies an interim normalization mapping to convert known text values to standard labels, but this is a workaround. Dahen Ibarra Munoz plans to convert these fields in REDCap to use proper dropdown menus, after which the data will arrive in a standardized numeric format automatically. All rows using the workaround are DQ-flagged in the output.
-
-### Technical detail
-
-`race` and `ethnicity` currently arrive as free-text strings rather than numeric codes. The pipeline's interim normalization (`RACE_FREE_TEXT_MAP` / `ETHNICITY_FREE_TEXT_MAP`) maps known values to canonical labels. Unrecognized values surface as `FREE_TEXT_NEEDS_REVIEW: <value>`. When Dahen completes the REDCap conversion, verify on the next delivery that these fields contain numeric codes, then remove the interim normalization block and associated DQ flag from the pipeline.
-
-**Jira:** CCS-48 (Waiting On Others — Dahen)
-
----
-
-## Issue 5: 5 Unregistered Tracking Sheet Samples
+## Issue 4: 5 Unregistered Tracking Sheet Samples
 
 ### Plain language
 
@@ -91,7 +76,7 @@ These five IDs are flagged during Stage 0 when the pipeline attempts to look up 
 
 ---
 
-## Issue 6: Emma's MIND Mapping File Missing from Server
+## Issue 5: Emma's MIND Mapping File Missing from Server
 
 ### Plain language
 
@@ -111,3 +96,6 @@ Emma needs to place this file on the PROTECT server at the configured path. Once
 | Date | Issue | Resolution |
 |---|---|---|
 | March 25, 2026 | Stage 2 APL join schema mismatch | Sun-Young's new APL file had a different schema (`sampling_site_type` column missing). Resolved by rewriting `_summarise_apl()` to support both legacy and current schema. ✅ Resolved |
+| April 12, 2026 | Race/ethnicity free-text → dropdown conversion (Jira CCS-48) | Dahen completed the REDCap conversion. Race and ethnicity now arrive as numeric codes and decode through `CODE_MAPS` correctly. CCS-48 closed. ✅ Resolved |
+| May 1, 2026 | Race/ethnicity Stage 1 cleanup (Jira CCS-57) | Removed the inert `no_unrecognized_race_ethnicity` Stage 1 QA check (PR 2). No DQ flags remain related to free-text race/ethnicity. ✅ Resolved |
+| May 6, 2026 | Stage 4 Conrad sample metadata integration (PR 3) | New leaf stage `stages/stage4_conrad_integration.py` ingests Dahen's Conrad sample-metadata Excel file (Sample Data + Micro Data sheets). Implements 14 QA checks including the cross-source consistency check `subject_id_consistent_with_redcap` (162 shared samples, 0 disagreements on the 4/30/26 file). Three new outputs (cleaned Sample Data, cleaned Micro Data, Stage-3-merged Conrad integration). Pipeline bumped to v1.1; intake protocols §9 promoted from "(proposed)" to operational. ✅ Resolved |

@@ -1,21 +1,22 @@
 # PROTECT Data Integration Pipeline
 
 **Maintainer:** Spencer Long (Arkin Lab / LBNL)
-**Version:** v1.0
+**Version:** v1.1 (Stage 4 added 2026-05-06)
 **Server path:** `/usr2/people/protect/Arkin_Lab/protect_data/protect_data_integration_pipeline/`
 
-This directory documents the PROTECT Data Integration Pipeline — the production system that unifies all four PROTECT data streams (isolate records, clinical metadata, isolation provenance, and multi-omics) into a set of analysis-ready linked tables.
+This directory documents the PROTECT Data Integration Pipeline — the production system that unifies the PROTECT data streams (isolate records, clinical metadata, isolation provenance, multi-omics, and Conrad sample metadata) into a set of analysis-ready linked tables.
 
 ---
 
 ## Data Streams
 
-| Stream | Source | Owner |
-|---|---|---|
-| Bacterial isolate records | Arkin Lab (ASMA) | Sun-Young Kim / Spencer Long |
-| Clinical metadata | Conrad Lab (REDCap) | Dahen Ibarra Munoz |
-| Isolation provenance (APL) | Arkin Lab | Sun-Young Kim |
-| Multi-omics (metaG/metaRS/MIND) | Zengler Lab | Emma Rooholfada |
+| Stream | Source | Owner | Stages affected |
+|---|---|---|---|
+| Bacterial isolate records | Arkin Lab (ASMA) | Sun-Young Kim / Spencer Long | 0, 2, 3 |
+| Clinical metadata (REDCap) | Conrad Lab | Dahen Ibarra Munoz | 1, 2, 3 |
+| Isolation provenance (APL) | Arkin Lab | Sun-Young Kim | 2 |
+| Multi-omics (metaG/metaRS/MIND) | Zengler Lab | Emma Rooholfada | 0, 3 |
+| Conrad sample metadata (Sample Data + Micro Data sheets) | Conrad Lab | Dahen Ibarra Munoz | 4 |
 
 ---
 
@@ -24,7 +25,7 @@ This directory documents the PROTECT Data Integration Pipeline — the productio
 - **Entry point:** `protect_pipeline_run.py` at pipeline root on server
 - **Config:** edit `config/run_config_<DATE>.yaml` — update input file paths for new monthly data
 - **Command:** `python protect_pipeline_run.py --config config/run_config_<DATE>.yaml`
-- **Selective stages:** use `--stages 0 1 2 3` flags
+- **Selective stages:** use `--stages 0 1 2 3 4` flags. Stage 4 is a leaf stage and can be re-run independently when only the Conrad metadata changes (e.g., `--stages 4`)
 - Outputs land in a dated subdirectory; QA report and run manifest are always produced
 
 ---
@@ -37,6 +38,9 @@ This directory documents the PROTECT Data Integration Pipeline — the productio
 | `protect_redcap_clinical_clean_<DATE>.csv` | Long-format, decoded, DQ-flagged clinical data |
 | `protect_clinical_isolate_sample_patient_merged_<DATE>.csv` | Clinical + isolate + sample join |
 | `protect_multiomics_isolate_sample_patient_integration_<DATE>.csv` | Full integration including metaG/metaRS/MIND/PA |
+| `protect_conrad_sample_data_clean_<DATE>.csv` | Bronze cleaned Conrad sample-level metadata (1 row per sample) |
+| `protect_conrad_micro_data_clean_<DATE>.csv` | Bronze cleaned Conrad clinical microbiology cultures (1 row per culture) |
+| `protect_multiomics_isolate_sample_patient_conrad_integration_<DATE>.csv` | Multi-omics integration table with Conrad sample-level data merged in (`_conrad`-suffixed columns) |
 | `protect_pipeline_qa_report_<DATE>.md` | All QA check results |
 | `protect_pipeline_run_log_<DATE>.md` | Run manifest (inputs, outputs, run metadata) |
 
