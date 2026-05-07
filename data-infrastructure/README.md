@@ -7,4 +7,4 @@ This directory documents how PROTECT data are centrally stored, organized, and g
 
 ## Integration Pipeline
 
-- **[PROTECT Data Integration Pipeline](./integration-pipeline/)** — Production pipeline unifying all four PROTECT data streams (isolate records, clinical metadata, isolation provenance, multi-omics) into analysis-ready linked tables (v1.0)
+- **[PROTECT Data Integration Pipeline](./integration-pipeline/)** — Production pipeline unifying the PROTECT data streams (isolate records, clinical metadata, isolation provenance, multi-omics, Conrad sample metadata) into analysis-ready linked tables (v1.1, Stage 4 added 2026-05-06)
