@@ -18,6 +18,8 @@ This directory documents the PROTECT Data Integration Pipeline — the productio
 | Multi-omics (metaG/metaRS/MIND) | Zengler Lab | Emma Rooholfada | 0, 3 |
 | Conrad sample metadata (Sample Data + Micro Data sheets) | Conrad Lab | Dahen Ibarra Munoz | 4 |
 
+> **Note:** The Zengler multi-omics streams (metaG/metaRS/MIND) cover **sputum samples only** — mouth-rinse samples are not sequenced. Emma's omics metadata therefore uses bare-numeric sample IDs with the `M`/`P`/`MP` suffixes stripped by convention (e.g. `PRO111`, not `PRO111P`); a bare omics `SampleID` denotes the sputum sample for that number. See [`operations/integration-pipeline/integration_pipeline_active_issues.md`](../../operations/integration-pipeline/integration_pipeline_active_issues.md) (Issue 6).
+
 ---
 
 ## How to Run

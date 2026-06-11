@@ -31,6 +31,8 @@ The result is two files:
 
 The naming convention encodes the run date directly: `3_25_26` is the date the pipeline was run. As of v4, the gold-layer output also includes 163 omics-only samples (Zengler Lab metaG/metaRS) that were never sent to Berkeley for isolation — these appear with `has_isolates=False` to enable full cohort visibility.
 
+> **Note:** The Zengler omics/MIND analysis (Emma Rooholfada) uses **sputum samples only** and strips the `M`/`P`/`MP` sample-ID suffixes by convention, so its `SampleID`s are bare numbers (e.g. `PRO111`, not `PRO111P`). When joining omics metadata, treat a bare omics `SampleID` as the sputum sample for that number. See [`operations/integration-pipeline/integration_pipeline_active_issues.md`](../../../../operations/integration-pipeline/integration_pipeline_active_issues.md) (Issue 6).
+
 ---
 
 ## File Locations (PROTECT Server)
