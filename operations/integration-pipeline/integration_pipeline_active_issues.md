@@ -1,6 +1,6 @@
 # PROTECT Data Integration Pipeline — Active Issues & Ongoing Work
 
-**Last updated:** May 6, 2026
+**Last updated:** June 11, 2026
 **Maintainer:** Spencer Long (Arkin Lab / LBNL)
 **Related pipeline:** PROTECT Data Integration Pipeline v1.1 (Stage 4 added 2026-05-06)
 **Server path:** `/usr2/people/protect/Arkin_Lab/protect_data/protect_data_integration_pipeline/`
@@ -18,6 +18,7 @@ This document is a living record of open items, pending decisions, and things be
 | 3 | PRO76 → PRO76M reassignment (42 isolates, Jira CCS-47) | Sun-Young Kim | ⚠️ Partial | ⏳ Waiting |
 | 4 | 5 unregistered tracking sheet samples (PRO35, PRO159M, PRO160M, PRO161M, PRO196M) | Sun-Young Kim | ⚠️ Partial | 📋 Requested |
 | 5 | Emma's MIND mapping file not on server (`ko_kegg_uniref_pathway_manuallycurated.tsv`) | Emma Rooholfada | ✅ Yes (blocks MIND re-run) | 📋 Requested |
+| 6 | Zengler MIND/omics analysis is sputum-only (sample-ID suffixes stripped by convention) | Emma Rooholfada | No | ✅ Resolved |
 
 ---
 
@@ -88,6 +89,18 @@ The pipeline's Stage 3 multi-omics integration step requires:
 - `ko_kegg_uniref_pathway_manuallycurated.tsv` at the path configured in `run_config` under `mind_mapping_file`
 
 Emma needs to place this file on the PROTECT server at the configured path. Once available, no pipeline code changes are needed — Stage 3 will read it automatically on the next run.
+
+---
+
+## Issue 6: Zengler MIND / Omics Analysis Uses Sputum Samples Only
+
+### Plain language
+
+The Zengler Lab's multi-omics analysis (metaG / metaRS / MIND), maintained by Emma Rooholfada, works with sputum samples only — it does not include mouth-rinse samples. Because of this, Emma intentionally drops the sample-ID suffixes (`M` = mouth rinse, `P` = pediatric, `MP` = mouth rinse + pediatric) in her metadata, so her sample IDs are bare numbers (e.g. `PRO111` rather than `PRO111P`). This is by design, not an error. Anyone joining her omics metadata to the integrated tables should read a bare omics `SampleID` as the sputum sample for that number and should not expect mouth-rinse omics. Confirmed by Emma on 2026-06-11.
+
+### Technical detail
+
+Emma's MIND metadata (`/usr2/people/protect/Zengler_Lab/Emma/analysis3/WoL2_Subset50_metaG_metadata.tsv` and the `metaRS` equivalent, which feed the `analysis_cluster*/MIND[_ratio]/` runs) carries bare-numeric `SampleID`s with suffixes stripped. There is no collision risk inside her dataset: although ~12 sample numbers exist as both a sputum (`PRO###`) and a mouth-rinse (`PRO###M`) for the same patient, only the sputum member is in her omics set, so the bare ID is unambiguous there. Separately, two pediatric sputum samples appeared bare with missing subject IDs — `PRO227` → `PRO227P` (subject 1009) and `PRO233` → `PRO233P` (subject 1000) — and are being re-attributed from the current REDCap export (Emma had built her metadata from an older export). No pipeline change is required. Remaining action: record the sputum-only scope in the omics analysis procedure so the bare-ID convention is explicit for downstream users.
 
 ---
 
